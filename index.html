@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday 🎂</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{
+  overflow:hidden;
+  background:radial-gradient(circle at 50% 20%,#51319b 0,#211047 38%,#0b061b 100%);
+  color:#fff;
+}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.container{
+  position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;
+  justify-content:center;padding:24px;
+}
+.card{
+  width:min(92vw,520px);padding:38px 26px 32px;text-align:center;border-radius:32px;
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.20);
+  backdrop-filter:blur(18px);box-shadow:0 25px 80px rgba(0,0,0,.35);
+}
+.badge{font-size:14px;letter-spacing:3px;text-transform:uppercase;opacity:.8}
+h1{
+  margin:12px 0 4px;font-size:clamp(42px,12vw,76px);line-height:1;
+  background:linear-gradient(90deg,#ffd86b,#ff8fc7,#b8a0ff,#ffd86b);
+  background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shine 5s linear infinite;
+}
+.subtitle{font-size:18px;opacity:.88;margin:12px 0 30px}
+.gift{
+  width:150px;height:125px;margin:10px auto 28px;position:relative;cursor:pointer;
+  filter:drop-shadow(0 18px 22px rgba(0,0,0,.3));transition:.35s;
+}
+.gift:hover{transform:translateY(-7px) scale(1.04)}
+.box{position:absolute;left:15px;right:15px;bottom:0;height:82px;border-radius:8px;background:linear-gradient(135deg,#ff477e,#e51e64)}
+.box:after{content:"";position:absolute;left:56px;top:0;width:25px;height:100%;background:#ffd45c}
+.lid{position:absolute;left:7px;right:7px;top:27px;height:28px;border-radius:8px;background:#ff5b8b}
+.lid:after{content:"";position:absolute;left:61px;top:0;width:25px;height:28px;background:#ffd45c}
+.ribbon-v{position:absolute;left:63px;top:-6px;width:20px;height:38px;background:#ffd45c;border-radius:8px;transform:rotate(22deg)}
+.ribbon-v:after{content:"";position:absolute;left:17px;top:0;width:20px;height:38px;background:#ffd45c;border-radius:8px;transform:rotate(-44deg)}
+.lid.open{animation:lidOpen .8s ease forwards}
+.sparkle{position:absolute;font-size:22px;animation:float 2.2s ease-in-out infinite}
+.s1{left:2%;top:18%}.s2{right:5%;top:30%;animation-delay:.5s}.s3{left:8%;bottom:18%;animation-delay:1s}.s4{right:9%;bottom:16%;animation-delay:1.5s}
+button{
+  border:0;border-radius:999px;padding:15px 28px;font-size:17px;font-weight:700;cursor:pointer;
+  color:#32104c;background:linear-gradient(135deg,#ffd86b,#ff91c8);
+  box-shadow:0 12px 30px rgba(255,122,181,.28);transition:.25s;
+}
+button:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(255,122,181,.4)}
+.message{
+  max-height:0;opacity:0;overflow:hidden;transform:translateY(18px);
+  transition:1s ease;margin-top:0;
+}
+.message.show{max-height:300px;opacity:1;transform:translateY(0);margin-top:25px}
+.message h2{font-size:30px;margin:0 0 10px}
+.message p{font-size:17px;line-height:1.7;margin:0}
+.music{position:fixed;right:18px;top:18px;z-index:5;width:48px;height:48px;padding:0;font-size:21px}
+.hint{font-size:12px;opacity:.55;margin-top:16px}
+@keyframes shine{to{background-position:300% 0}}
+@keyframes float{50%{transform:translateY(-18px) rotate(8deg)}}
+@keyframes lidOpen{50%{transform:translateY(-35px) rotate(-8deg)}100%{transform:translateY(-55px) rotate(-14deg);opacity:0}}
+@media(max-width:480px){.card{padding:30px 18px 25px}.subtitle{font-size:16px}.gift{transform:scale(.9)}.gift:hover{transform:scale(.94) translateY(-5px)}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+
+<div class="sparkle s1">✨</div><div class="sparkle s2">💖</div>
+<div class="sparkle s3">⭐</div><div class="sparkle s4">✨</div>
+
+<button class="music" id="musicBtn" aria-label="Bật nhạc">🔇</button>
+
+<main class="container">
+  <section class="card">
+    <div class="badge">A special day ✨</div>
+    <h1>Happy Birthday!</h1>
+    <div class="subtitle">Một món quà nhỏ dành riêng cho bạn 🎁</div>
+
+    <div class="gift" id="gift" role="button" tabindex="0" aria-label="Mở quà">
+      <div class="ribbon-v"></div>
+      <div class="lid" id="lid"></div>
+      <div class="box"></div>
+    </div>
+
+    <button id="openBtn">🎁 Mở quà</button>
+
+    <div class="message" id="message">
+      <h2>🎂 Chúc mừng sinh nhật! 🎉</h2>
+      <p>
+        Chúc bạn tuổi mới thật nhiều niềm vui, luôn hạnh phúc,
+        mạnh khỏe và gặp thật nhiều điều may mắn. 💖<br>
+        Mong mọi ước mơ của bạn đều trở thành hiện thực! ✨
+      </p>
+    </div>
+    <div class="hint">Nhấn “Mở quà” để bắt đầu bữa tiệc 🎊</div>
+  </section>
+</main>
+
+<script>
+const canvas=document.getElementById("fx"),ctx=canvas.getContext("2d");
+let W,H,confetti=[],particles=[],opened=false;
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
+addEventListener("resize",resize);resize();
+
+function burst(){
+  const chars=["🎉","✨","💖","⭐","🎊"];
+  for(let i=0;i<90;i++){
+    const a=Math.random()*Math.PI*2,s=3+Math.random()*8;
+    confetti.push({x:W/2,y:H/2,vx:Math.cos(a)*s,vy:Math.sin(a)*s-3,
+      r:2+Math.random()*4,life:100+Math.random()*70,rot:Math.random()*6.28,
+      emoji:chars[Math.floor(Math.random()*chars.length)]});
+  }
+}
+function fireworks(){
+  for(let k=0;k<5;k++){
+    const x=W*(.15+Math.random()*.7),y=H*(.12+Math.random()*.35);
+    for(let i=0;i<28;i++){
+      const a=i/28*Math.PI*2,s=1.5+Math.random()*3;
+      particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:50+Math.random()*30});
+    }
+  }
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  confetti.forEach((p,i)=>{
+    p.x+=p.vx;p.vy+=.08;p.y+=p.vy;p.rot+=.08;p.life--;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+    ctx.font=(12+p.r*3)+"px sans-serif";ctx.fillText(p.emoji,0,0);ctx.restore();
+    if(p.life<=0)confetti.splice(i,1);
+  });
+  particles.forEach((p,i)=>{
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.035;p.life--;
+    ctx.globalAlpha=Math.max(0,p.life/80);ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    if(p.life<=0)particles.splice(i,1);
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+const open=()=>{
+  if(opened)return; opened=true;
+  document.getElementById("lid").classList.add("open");
+  document.getElementById("message").classList.add("show");
+  document.getElementById("openBtn").textContent="🎉 Chúc mừng sinh nhật!";
+  burst();fireworks();setTimeout(fireworks,700);setTimeout(fireworks,1400);
+  startMusic();
+};
+document.getElementById("openBtn").onclick=open;
+document.getElementById("gift").onclick=open;
+document.getElementById("gift").onkeydown=e=>{if(e.key==="Enter"||e.key===" ")open()};
+
+// Nhạc Happy Birthday được tạo trực tiếp bằng Web Audio, không cần file MP3.
+let audioCtx,playing=false,timer;
+const notes={C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392,A4:440};
+const melody=[
+ ["G4",.35],["G4",.35],["A4",.7],["G4",.7],["C4",.7],["B4",1.1],
+ ["G4",.35],["G4",.35],["A4",.7],["G4",.7],["D4",.7],["C4",1.1],
+ ["G4",.35],["G4",.35],["G4",.7],["E4",.7],["C4",.7],["B4",.7],["A4",1.1],
+ ["F4",.35],["F4",.35],["E4",.7],["C4",.7],["D4",.7],["C4",1.2]
+];
+function playSong(){
+ if(!playing)return;
+ let t=audioCtx.currentTime+.05;
+ melody.forEach(([n,d])=>{
+   const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+   o.type="sine";o.frequency.value=notes[n];
+   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.12,t+.025);
+   g.gain.exponentialRampToValueAtTime(.001,t+d-.03);
+   o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+d);t+=d;
+ });
+ timer=setTimeout(playSong,(melody.reduce((a,b)=>a+b[1],0))*1000+300);
+}
+function startMusic(){
+ if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+ if(audioCtx.state==="suspended")audioCtx.resume();
+ playing=true;document.getElementById("musicBtn").textContent="🔊";playSong();
+}
+document.getElementById("musicBtn").onclick=()=>{
+ if(playing){playing=false;clearTimeout(timer);document.getElementById("musicBtn").textContent="🔇";}
+ else startMusic();
+};
+</script>
+
+<style>
+/* MEGA EFFECTS */
+body:before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(115deg,transparent 0 45%,rgba(255,255,255,.08) 50%,transparent 55%);background-size:250% 100%;animation:laser 7s linear infinite}
+.magic-cursor{position:fixed;z-index:50;pointer-events:none;font-size:18px;animation:cursorPop .8s ease-out forwards}
+.firework-dot{position:fixed;z-index:12;width:5px;height:5px;border-radius:50%;pointer-events:none;box-shadow:0 0 12px 4px currentColor;animation:dotFly 1s ease-out forwards}
+@keyframes laser{to{background-position:-250% 0}}@keyframes cursorPop{to{transform:translateY(-35px) scale(0);opacity:0}}@keyframes dotFly{to{transform:translate(var(--dx),var(--dy));opacity:0}}
+</style>
+<script>
+// Extra magic: heart trail + colorful mini fireworks + automatic celebration waves
+let trailLock=0;
+document.addEventListener('pointermove',e=>{
+ if(Date.now()-trailLock<55)return; trailLock=Date.now();
+ const el=document.createElement('div');el.className='magic-cursor';el.textContent=['✨','💖','✦','🌟'][Math.floor(Math.random()*4)];
+ el.style.left=e.clientX+'px';el.style.top=e.clientY+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),800);
+});
+function miniFirework(x,y){
+ for(let i=0;i<22;i++){
+  const a=Math.PI*2*i/22, d=35+Math.random()*90;
+  const el=document.createElement('i');el.className='firework-dot';el.style.left=x+'px';el.style.top=y+'px';
+  el.style.color=`hsl(${Math.random()*360} 100% 70%)`;
+  el.style.setProperty('--dx',Math.cos(a)*d+'px');el.style.setProperty('--dy',Math.sin(a)*d+'px');
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1100);
+ }
+}
+const oldOpenGift=window.openGift;
+window.openGift=function(){
+ oldOpenGift();
+ const points=[[.18,.25],[.82,.23],[.5,.12],[.12,.62],[.88,.62],[.5,.82]];
+ points.forEach((p,i)=>setTimeout(()=>miniFirework(innerWidth*p[0],innerHeight*p[1]),i*260));
+};
+setInterval(()=>{if(window.opened){miniFirework(50+Math.random()*(innerWidth-100),80+Math.random()*innerHeight*.5)}},2200);
+</script>
+</body>
+</html>
